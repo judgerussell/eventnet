@@ -36,6 +36,28 @@ def artist_list(request):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'POST'])
+def permitted_artist_list(request):
+    if request.method == 'GET':
+        data = Profile.objects.get(user=request.user).permitted_artists
+
+        serializer = ArtistSerializer(
+            data, 
+            context={'request': request},
+            many = True
+        )
+
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        
+        serializer = ArtistSerializer(data=request.data)
+      
+        if serializer.is_valid():
+
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def artist_detail(request, pk):
     try:
@@ -93,6 +115,29 @@ def venue_list(request):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'POST'])
+def permitted_venue_list(request):
+    if request.method == 'GET':
+        data = Profile.objects.get(user=request.user).permitted_venues
+
+        serializer = ArtistSerializer(
+            data, 
+            context={'request': request},
+            many = True
+        )
+
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        
+        serializer = ArtistSerializer(data=request.data)
+      
+        if serializer.is_valid():
+
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def venue_detail(request, pk):
     try:
@@ -140,6 +185,22 @@ def users_list(request):
         )
 
     return Response(serializer.data)
+
+@api_view(['GET'])
+def friends_list(request, id):
+    
+    if request.method == "GET":
+        data = Profile.objects.get(id=id).friends
+
+        serializer = ProfileSerializer(
+            data,
+            context = {'request' : request},
+            many = True
+        )
+
+    return Response(serializer.data)
+
+
 
 def send_friend_request(request, id):
     if request.user.is_authenticated():

@@ -1,12 +1,26 @@
 from django.shortcuts import render
 from .serializers import EventSerializer
 from .models import Event
+from profiles.models import Profile
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
 # Create your views here.
+
+@api_view(['GET'])
+def hosted_event_list(request):
+    if request.method == 'GET':
+        data = Event.objects.filter(hosts__id__exact=Profile.objects.get(user=request.user).id)
+
+        serializer = EventSerializer(
+            data, 
+            context={'request': request},
+            many = True
+        )
+
+        return Response(serializer.data)
 
 @api_view(['GET', 'POST'])
 def event_list(request):
@@ -61,3 +75,4 @@ def event_detail(request, pk):
     elif request.method == 'DELETE':
         event.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+

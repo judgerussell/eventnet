@@ -12,6 +12,7 @@ class VenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
         fields = [
+            'id',
             'name',
             'address',
             'type_of_venue',
@@ -26,6 +27,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendRequest
         fields = [
+            'id',
             'to_user',
             'from_user'
         ]
@@ -35,6 +37,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            'id',
             'user',
             'description',
             'friends',
