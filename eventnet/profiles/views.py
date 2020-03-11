@@ -31,7 +31,8 @@ def artist_list(request):
       
         if serializer.is_valid():
 
-            serializer.save()
+            artist = serializer.save()
+            Profile.objects.get(user=request.user).permitted_artists.add(artist)
             return Response(status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -111,6 +112,7 @@ def venue_list(request):
         if serializer.is_valid():
 
             serializer.save()
+            Profile.objects.get(user=request.user).permitted_venues.add(venue)
             return Response(status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

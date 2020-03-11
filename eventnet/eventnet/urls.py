@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from profiles.models import Profile, FriendRequest, Artist, Venue
 from django.conf.urls import url
 from profiles import views
@@ -22,6 +22,7 @@ from events import views as event_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('frontend.urls')),
     re_path(r'^api/artists/$', views.artist_list),
     re_path(r'^api/artists/([0-9]+)', views.artist_detail, name='artist_detail'),
     re_path(r'^api/artists/permitted$', views.permitted_artist_list, name='permitted_artists'),

@@ -12,6 +12,7 @@ class EventSerializer(serializers.ModelSerializer):
             'date',
             'age_restriction',
             'hosts',
+            'going',
             'artists',
             'venue'
         ]

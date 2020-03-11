@@ -22,7 +22,8 @@ class Event(models.Model):
         verbose_name = 'age restriction'
     )
 
-    hosts = models.ManyToManyField(Profile, verbose_name='hosts')
+    hosts = models.ManyToManyField(Profile, related_name='hosts', verbose_name='hosts')
+    going = models.ManyToManyField(Profile, related_name='going', verbose_name='going')
     artists = models.ManyToManyField(Artist, verbose_name='artists')
     venue = models.ForeignKey(Venue, related_name='venue', on_delete='CASCADE')
 
