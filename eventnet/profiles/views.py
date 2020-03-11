@@ -32,7 +32,9 @@ def artist_list(request):
         if serializer.is_valid():
 
             artist = serializer.save()
-            Profile.objects.get(user=request.user).permitted_artists.add(artist)
+            if request.user.is_authenticated:
+                Profile.objects.get(user=request.user).permitted_artists.add(artist)
+            
             return Response(status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

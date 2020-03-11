@@ -22,7 +22,6 @@ from events import views as event_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('frontend.urls')),
     re_path(r'^api/artists/$', views.artist_list),
     re_path(r'^api/artists/([0-9]+)', views.artist_detail, name='artist_detail'),
     re_path(r'^api/artists/permitted$', views.permitted_artist_list, name='permitted_artists'),
