@@ -46,7 +46,6 @@ class ArtistCreateUpdate extends Component {
 
     handleSubmit(event) {
         const {match: { params } } = this.props;
-        console.log('hhiiiii')
         if(params && params.id){
             this.handleUpdate(params.id);
         } else {
@@ -67,7 +66,7 @@ class ArtistCreateUpdate extends Component {
                     <label>
                         Description:
                     </label>
-                    <input className="form-control" type="text" ref="description" />
+                    <textarea className="form-control" ref="description" />
 
                     <input className="btn btn-primary" type="submit" value="Submit"/>
                 </div>

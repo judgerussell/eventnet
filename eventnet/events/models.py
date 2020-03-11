@@ -35,3 +35,6 @@ class Event(models.Model):
             self.slug = slugify(self.title)
 
         super(Event, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.title

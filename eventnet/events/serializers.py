@@ -3,16 +3,19 @@ from .models import Event
 
 class EventSerializer(serializers.ModelSerializer):
 
+    venue = serializers.CharField(required=False)
+    
     class Meta:
         model = Event
         fields = [
+            'id',
             'title',
-            'description',
-            'price',
             'date',
-            'age_restriction',
+            'venue',
             'hosts',
-            'going',
             'artists',
-            'venue'
+            'price',
+            'age_restriction',
+            'description',
+            'going',
         ]

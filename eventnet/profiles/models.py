@@ -18,6 +18,9 @@ class Venue(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.slug = slugify(self.name)
@@ -31,8 +34,10 @@ class Artist(models.Model):
 
     def __str__(self):
         return self.name
-
     
+    def __unicode__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.slug = slugify(self.name)
@@ -56,6 +61,10 @@ class Profile(models.Model):
 
     def __str__(self):
         return str(self.user.username)
+
+    
+    def __unicode__(self):
+        return self.user.username
 
     def get_absolute_url(self):
         return "/api/users/{}".format(self.id)
