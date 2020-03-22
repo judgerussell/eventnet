@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom'
 import ApiAccess from '../apiaccess';
-import DateTimePicker from 'react-datetime-picker'
+import DateTimePicker from 'react-datetime-picker';
+import UserSearch from './UserSearch';
 
 const apiAccess = new ApiAccess();
 
@@ -9,7 +11,13 @@ class EventCreateUpdate extends Component {
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.state = {
+            toEventList: false,
+            date: null
+        }
     }
+
+    onChange = date => this.setState({date: date})
 
     componentDidMount() {
         const {match: { params } } = this.props;
@@ -17,9 +25,10 @@ class EventCreateUpdate extends Component {
             apiAccess.getEvent(params.id).then((c)=>{
                 this.refs.title.value = c.title;
                 this.refs.description.value = c.description;
-                this.refs.price.value = c.price
-                this.refs.age_restriction.value = c.age_restriction
-                this.refs.date.value = c.date
+                this.refs.price.value = c.price;
+                this.refs.age_restriction.value = c.age_restriction;
+                this.refs.date.value = new Date(c.date);
+                this.setState({date: this.refs.date.value});
             });
         }
     }
@@ -27,9 +36,13 @@ class EventCreateUpdate extends Component {
     handleCreate() {
         apiAccess.createEvent({
             "title" : this.refs.title.value,
-            "description": this.refs.description.value
+            "description": this.refs.description.value,
+            "price" : this.refs.price.value,
+            "age_restriction" : this.refs.age_restriction.value,
+            "date" : this.refs.date.value,
         }).then((result)=>{
-            alert("Event created")
+            alert("Event created");
+            this.setState(() => ({ toEventList: true }));
         }).catch((e)=> {
             console.log(e.response)
             alert('There was an error! Please recheck form.');
@@ -40,10 +53,15 @@ class EventCreateUpdate extends Component {
         apiAccess.updateEvent({
             "id": id,
             "title": this.refs.title.value,
-            "description": this.refs.description.value
+            "description": this.refs.description.value,
+            "price" : this.refs.price.value,
+            "age_restriction" : this.refs.age_restriction.value,
+            "date" : this.refs.date.value,
         }).then((result)=>{
             alert("Event updated");
-        }).catch(()=>{
+            this.setState(() => ({ toEventList: true }));
+        }).catch((e)=>{
+            console.log(e.response)
             alert('There was an error! Please recheck form.');
         });
     }
@@ -59,6 +77,8 @@ class EventCreateUpdate extends Component {
     }
 
     render() {
+        if (this.state.toArtistList === true)
+            return <Redirect to='/events' /> 
         return(
             <form onSubmit={this.handleSubmit}>
                 <div className="form-group">
@@ -70,7 +90,7 @@ class EventCreateUpdate extends Component {
                     <label>
                         Date:
                     </label>
-                    <DateTimePicker onChange="{this.onChange}" ref="date"/>
+                    <DateTimePicker onChange={this.onChange} value={this.state.date} ref="date"/>
 
                     <label>
                         Venue:
@@ -78,6 +98,7 @@ class EventCreateUpdate extends Component {
 
                     <label>
                         Hosts:
+                        <UserSearch></UserSearch>
                     </label>
 
                     <label>

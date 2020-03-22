@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom'
 import ApiAccess from '../apiaccess';
 
 const apiAccess = new ApiAccess();
@@ -8,6 +9,9 @@ class ArtistCreateUpdate extends Component {
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.state = {
+            toArtistList: false
+        }
     }
 
     componentDidMount() {
@@ -25,7 +29,8 @@ class ArtistCreateUpdate extends Component {
             "name" : this.refs.name.value,
             "description": this.refs.description.value
         }).then((result)=>{
-            alert("Artist created")
+            alert("Artist created");
+            this.setState(() => ({ toArtistList: true }));
         }).catch((e)=> {
             console.log(e.response)
             alert('There was an error! Please recheck form.');
@@ -39,6 +44,7 @@ class ArtistCreateUpdate extends Component {
             "description": this.refs.description.value
         }).then((result)=>{
             alert("Artist updated");
+            this.setState(() => ({ toArtistList: true }));
         }).catch(()=>{
             alert('There was an error! Please recheck form.');
         });
@@ -55,6 +61,9 @@ class ArtistCreateUpdate extends Component {
     }
 
     render() {
+        if(this.state.toArtistList === true) {
+            return <Redirect to= "/artists" />
+        }
         return(
             <form onSubmit={this.handleSubmit}>
                 <div className="form-group">
