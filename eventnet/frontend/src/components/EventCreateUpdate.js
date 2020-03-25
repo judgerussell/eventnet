@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
 import ApiAccess from '../apiaccess';
 import DateTimePicker from 'react-datetime-picker';
-import UserSearch from './UserSearch';
+import SearchBox from './SearchBox';
 
 const apiAccess = new ApiAccess();
 
@@ -13,8 +13,11 @@ class EventCreateUpdate extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.state = {
             toEventList: false,
-            date: null
+            date: null,
+            artists: this.getArtistSearchData(),
+            venues: this.getVenueSearchData()
         }
+        
     }
 
     onChange = date => this.setState({date: date})
@@ -31,6 +34,43 @@ class EventCreateUpdate extends Component {
                 this.setState({date: this.refs.date.value});
             });
         }
+    }
+
+    getSearchData(apiFunc) {
+        let self = this;
+        apiFunc().then(function (result) {
+            let elems = [];
+            console.log(result)
+            for (var elem of result) {
+                elems.push({key: elem['id'], value: elem['name']});
+            }
+            return elems;
+        });
+        
+    }
+
+    getArtistSearchData() {
+        let self = this
+        apiAccess.getArtists().then(function (result) {
+            console.log(result)
+            let artists = []
+            for (var artist of result) {
+                artists.push({key: artist['id'], value: artist['name']});
+            }
+            self.setState({ artists: artists})
+        });
+    }
+
+    getVenueSearchData() {
+        let self = this
+        apiAccess.getVenues().then(function (result) {
+            console.log(result)
+            let venues = []
+            for (var venue of result) {
+                venues.push({key: venue['id'], value: venue['name']});
+            }
+            self.setState({ venues: venues})
+        });
     }
 
     handleCreate() {
@@ -77,9 +117,28 @@ class EventCreateUpdate extends Component {
     }
 
     render() {
+
         if (this.state.toArtistList === true)
             return <Redirect to='/events' /> 
+        
+        console.log(this.state.artists)
+        let a = <div>loading...</div>
+        let v = <div>loading...</div>
+        
+
+        /* artist search bar */
+        if (this.state.artists) {
+            a = <SearchBox placeholder="Search" data={this.state.artists} max={50}/>
+        }
+
+        /* artist search bar */
+        if (this.state.artists) {
+            console.log(this.state.venues)
+            v = <SearchBox placeholder="Search" data={this.state.venues}/>
+        }
+        
         return(
+            <div className="container">
             <form onSubmit={this.handleSubmit}>
                 <div className="form-group">
                     <label>
@@ -90,30 +149,33 @@ class EventCreateUpdate extends Component {
                     <label>
                         Date:
                     </label>
-                    <DateTimePicker onChange={this.onChange} value={this.state.date} ref="date"/>
+                    <DateTimePicker className="form-control" onChange={this.onChange} value={this.state.date} ref="date"/>
 
                     <label>
                         Venue:
                     </label>
+                    {v}
 
                     <label>
                         Hosts:
-                        <UserSearch></UserSearch>
                     </label>
+                    <input className="form-control" type="text" />
+
 
                     <label>
                         Artists:
                     </label>
+                    {a}
                     
                     <label>
                         Price:
                     </label>
-                    <input className="formControl" type="number" min="0" oninput="{validity.valid||(value='');}" ref="price"/>
+                    <input className="form-control" type="number" min="0" onInput="{validity.valid||(value='');}" ref="price"/>
 
                     <label>
                         Age Restrictions:
                     </label>
-                    <select ref="age_restriction">
+                    <select className="form-control" ref="age_restriction">
                         <option>All ages</option>
                         <option>16+</option>
                         <option>18+</option>
@@ -129,6 +191,7 @@ class EventCreateUpdate extends Component {
                     <input className="btn btn-primary" type="submit" value="Submit"/>
                 </div>
             </form>
+            </div>
         );
     }
 

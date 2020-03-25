@@ -4,6 +4,7 @@ import { Route, Link } from  'react-router-dom';
 import ArtistCreateUpdate from './components/ArtistCreateUpdate';
 import ArtistList from './components/ArtistList';
 import EventList from './components/EventList';
+import SearchBox from './components/SearchBox';
 import  './App.css';
 import EventCreateUpdate from './components/EventCreateUpdate';
 
@@ -30,6 +31,7 @@ const BaseLayout = () => (
       <Route path="/events" exact component={EventList} />
       <Route path="/event/:id" exact component={EventCreateUpdate} />
       <Route path="/create-event/" exact component={EventCreateUpdate} />
+      <Route path="/testsearch/" exact component={SearchBox} />
     </div>
 
   </div>

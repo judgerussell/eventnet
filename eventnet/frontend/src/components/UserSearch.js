@@ -25,13 +25,12 @@ class UserSearch extends Component {
     render() {
         
         let self = this;
-
-        console.log(self.state.users)
         return (
             <div>
                 <Search
                     items={self.state.users}
                     multiple={true}
+                    max={100}
                 />
             </div>
         )
