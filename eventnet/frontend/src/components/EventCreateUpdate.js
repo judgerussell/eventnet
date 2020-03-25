@@ -11,11 +11,14 @@ class EventCreateUpdate extends Component {
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.artist_num = 0
         this.state = {
             toEventList: false,
             date: null,
             artists: this.getArtistSearchData(),
-            venues: this.getVenueSearchData()
+            venues: this.getVenueSearchData(),
+            venue_starting_data: null,
+            artists_starting_data: []
         }
         
     }
@@ -31,45 +34,47 @@ class EventCreateUpdate extends Component {
                 this.refs.price.value = c.price;
                 this.refs.age_restriction.value = c.age_restriction;
                 this.refs.date.value = new Date(c.date);
+                let venue_starting_data = c.venue;
+                let artists_starting_data = c.artists;
                 this.setState({date: this.refs.date.value});
+
+                this.artist_num = c.artists.length
+                
+                for (var a of artists_starting_data) {
+                    apiAccess.getArtist(a).then((artist) => {
+                        this.setState({artists_starting_data: this.state.artists_starting_data.concat({key: artist.id, value: artist.name})})
+                        console.log(this.state.artists_starting_data)
+                    });
+                }
+                apiAccess.getVenue(parseInt(venue_starting_data)).then((v) => {
+                    this.setState({venue_starting_data: this.toKeyValue([v])});        
+                })
             });
+
+            
         }
     }
 
-    getSearchData(apiFunc) {
-        let self = this;
-        apiFunc().then(function (result) {
-            let elems = [];
-            console.log(result)
-            for (var elem of result) {
-                elems.push({key: elem['id'], value: elem['name']});
-            }
-            return elems;
-        });
-        
+    toKeyValue(arr) {
+        let elems = [];
+        for (var elem of arr) {
+            elems.push({key: elem['id'], value: elem['name']});
+        }
+        return elems;
     }
 
     getArtistSearchData() {
         let self = this
         apiAccess.getArtists().then(function (result) {
-            console.log(result)
-            let artists = []
-            for (var artist of result) {
-                artists.push({key: artist['id'], value: artist['name']});
-            }
-            self.setState({ artists: artists})
+            self.setState({ artists: self.toKeyValue(result)})
         });
     }
 
     getVenueSearchData() {
         let self = this
         apiAccess.getVenues().then(function (result) {
-            console.log(result)
-            let venues = []
-            for (var venue of result) {
-                venues.push({key: venue['id'], value: venue['name']});
-            }
-            self.setState({ venues: venues})
+            self.setState({ venues: self.toKeyValue(result)})
+        
         });
     }
 
@@ -121,20 +126,18 @@ class EventCreateUpdate extends Component {
         if (this.state.toArtistList === true)
             return <Redirect to='/events' /> 
         
-        console.log(this.state.artists)
         let a = <div>loading...</div>
         let v = <div>loading...</div>
         
 
         /* artist search bar */
-        if (this.state.artists) {
-            a = <SearchBox placeholder="Search" data={this.state.artists} max={50}/>
+        if (this.state.artists && this.state.artists_starting_data.length >= this.artist_num) {
+            a = <SearchBox placeholder="Search" data={this.state.artists} starting_data={this.state.artists_starting_data} max={50} input_ref="artists"/>
         }
 
-        /* artist search bar */
-        if (this.state.artists) {
-            console.log(this.state.venues)
-            v = <SearchBox placeholder="Search" data={this.state.venues}/>
+        /* venue search bar */
+        if (this.state.venues && this.state.venue_starting_data) {
+            v = <SearchBox placeholder="Search" data={this.state.venues} starting_data={this.state.venue_starting_data} input_ref="venues"/>
         }
         
         return(

@@ -16,7 +16,7 @@ class Venue(models.Model):
     slug = models.SlugField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.id.__str__()
 
     def __unicode__(self):
         return self.name
@@ -33,7 +33,7 @@ class Artist(models.Model):
     slug = models.SlugField('slug', blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.id.__str__()
     
     def __unicode__(self):
         return self.name

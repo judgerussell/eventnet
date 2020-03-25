@@ -9,12 +9,13 @@ export default class ReachSearchBox extends Component {
 
     constructor(props) {
         super(props);
+
+        const { starting_data } = props;
         this.state = {
             value: '',
-            saved_values: [],
+            saved_values: starting_data,
             matchedRecords: [],
         }
-        const {max } = props;
         const { data } = props;
         const options = {      /**       * At what point does the match algorithm give up. A threshold of 0.0       * requires a perfect match (of both letters and location), a threshold       * of 1.0 would match anything.       */      
             threshold: 0.05,      /**       * Determines approximately where in the text is the pattern expected to be found.       */      
@@ -23,8 +24,8 @@ export default class ReachSearchBox extends Component {
             minMatchCharLength: 1,      /**       * List of properties that will be searched. This supports nested properties,       * weighted search, searching in arrays of strings and objects.       */      
             keys: ['value']    
         }
-        console.log(props)
         this.fuse = new Fuse(data, options)
+        console.log(starting_data)
     }
 
     componentDidMount() {
@@ -36,7 +37,6 @@ export default class ReachSearchBox extends Component {
             minMatchCharLength: 1,      /**       * List of properties that will be searched. This supports nested properties,       * weighted search, searching in arrays of strings and objects.       */      
             keys: ['value']    
         }
-        console.log(this.props)
         this.fuse = new Fuse(data, options)
         const matchedRecords = this.fuse.search(value)
         this.setState({      
@@ -51,14 +51,12 @@ export default class ReachSearchBox extends Component {
         let matchedRecords = this.fuse.search(value);
         let show = true;
         if (value === '') show = false;
-        console.log(this.props)
-        console.log(this.fuse.search(value))
-        console.log(this.state)
         this.setState({ value: value.trim(), matchedRecords, showDropdown: show });
     }
 
     handleDropdownItemClick = record => {
-        if (this.state.saved_values.length > this.props.max) return
+        const { max } = this.props;
+        if (this.state.saved_values.length > max) return
         const { value } = record.item
         this.setState({      
             saved_values: this.state.saved_values.concat(record.item),
@@ -68,7 +66,7 @@ export default class ReachSearchBox extends Component {
 
     handleChosenItemClick = record => {
         this.setState({
-            saved_values: this.state.saved_values.filter(i => i.key != record.key)
+            saved_values: this.state.saved_values.filter(i => i.key !== record.key)
         })
     }
     
@@ -103,7 +101,6 @@ export default class ReachSearchBox extends Component {
         if (!showDropdown) return false
         return (<div className="dropdown-menu show" role="menu">                
                 {matchedRecords.slice(0,5).map(record => { 
-                    console.log(record)
                     return (
                         <div className="dropdown-item"
                             key={record.item.key} 
